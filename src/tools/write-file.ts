@@ -27,8 +27,11 @@ export const writeFileTool: ToolDefinition = {
     workspaceRoot: string,
     authoritySurfaces?: string[]
   ): Promise<ToolResult> {
-    const relPath = String(input.path);
+    let relPath = String(input.path);
     const content = String(input.content);
+
+    // Normalize: strip leading workspace/ if the LLM includes it
+    relPath = relPath.replace(/^workspace\//, "");
 
     if (relPath.includes("..")) {
       return { success: false, output: "Path traversal not allowed" };

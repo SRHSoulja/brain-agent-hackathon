@@ -129,7 +129,14 @@ async function executeLiveStep(
     const response = await client.messages.create({
       model: "claude-sonnet-4-20250514",
       max_tokens: 2048,
-      system: `You are an autonomous execution agent. You have tools to interact with a workspace filesystem. Complete the requested step using the tools. When you have finished the step, respond with a text summary of what you did. Do not ask questions -- just execute.`,
+      system: `You are an autonomous execution agent. You have tools to interact with a workspace filesystem.
+
+File paths are relative to the workspace root. Do NOT prefix paths with "workspace/".
+Examples: "docs/api-spec.md", "summaries/brief.md", "src/validate.ts"
+
+This task can read from anywhere in the workspace but can only write to: ${task.authority_surfaces.join(", ")}
+
+Complete the requested step using the tools. When you have finished, respond with a text summary. Do not ask questions -- just execute.`,
       tools: getToolSchemas() as Anthropic.Tool[],
       messages: conversationHistory,
     });
@@ -169,7 +176,8 @@ async function executeLiveStep(
       log("tool_call", { tool: block.name, input: block.input, task_id: task.id });
 
       if (block.name === "write_file") {
-        const writePath = String((block.input as Record<string, unknown>).path ?? "");
+        const rawPath = String((block.input as Record<string, unknown>).path ?? "");
+        const writePath = rawPath.replace(/^workspace\//, "");
         const count = (writeCounts.get(writePath) ?? 0) + 1;
         writeCounts.set(writePath, count);
         if (count > maxWritesPerPath) {

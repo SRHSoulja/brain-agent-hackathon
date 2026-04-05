@@ -22,7 +22,9 @@ export const readFileTool: ToolDefinition = {
     input: Record<string, unknown>,
     workspaceRoot: string
   ): Promise<ToolResult> {
-    const relPath = String(input.path);
+    let relPath = String(input.path);
+    // Normalize: strip leading workspace/ if the LLM includes it
+    relPath = relPath.replace(/^workspace\//, "");
     if (relPath.includes("..")) {
       return { success: false, output: "Path traversal not allowed" };
     }
