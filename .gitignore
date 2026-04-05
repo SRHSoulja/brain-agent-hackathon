@@ -1,0 +1,9 @@
+node_modules/
+dist/
+logs/events.jsonl
+tasks/active/*.json
+tasks/completed/*.json
+workspace/summaries/
+workspace/src/
+workspace/reviews/
+.env

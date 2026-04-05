@@ -1,0 +1,23 @@
+{
+  "name": "brain-agent-hackathon",
+  "version": "1.0.0",
+  "description": "Autonomous task orchestration agent with safety gates",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "tsc && MOCK_LLM=1 node dist/index.js",
+    "start:live": "tsc && node dist/index.js",
+    "demo:verdict-fail": "tsc && MOCK_LLM=1 node dist/index.js --demo-verdict-fail",
+    "reset": "rm -rf tasks/active/*.json tasks/completed/*.json workspace/summaries workspace/src workspace/reviews logs/events.jsonl && git checkout -- tasks/queue/ 2>/dev/null || true"
+  },
+  "keywords": ["ai-agent", "autonomous", "orchestration", "task-queue"],
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "task-002",
+  "title": "Generate input validation module",
+  "description": "Read the requirements brief produced by task-001, then generate a TypeScript input validation module enforcing all documented constraints.",
+  "priority": "P2",
+  "status": "queued",
+  "authority_surfaces": ["workspace/src"],
+  "depends_on": ["task-001"],
+  "created_at": "2026-04-04T00:00:00Z"
+}

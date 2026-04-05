@@ -1,0 +1,10 @@
+{
+  "id": "task-003",
+  "title": "Review validation coverage",
+  "description": "Read the generated validation code and the requirements brief, then write a review report assessing coverage of each constraint.",
+  "priority": "P3",
+  "status": "queued",
+  "authority_surfaces": ["workspace/reviews"],
+  "depends_on": ["task-002"],
+  "created_at": "2026-04-04T00:00:00Z"
+}
