@@ -2,7 +2,7 @@
 
 An autonomous task orchestration agent that plans, executes, and verifies multi-step work with built-in safety gates. No UI, no database, no cloud infrastructure -- just a TypeScript process that reads a task queue and does the work.
 
-Built for the [Microsoft AI Agents Hackathon](https://microsoft.github.io/AI_Agents_Hackathon/) (JS/TS track).
+Built for the [AMD Developer Hackathon 2026](https://lablab.ai/ai-hackathons/amd-developer) (AI agents track). Model-agnostic: works with Claude API or open models hosted on AMD Developer Cloud via vLLM.
 
 ## What It Does
 
@@ -51,6 +51,21 @@ Live mode uses Claude to dynamically decompose and execute tasks. Requires an An
 export ANTHROPIC_API_KEY=sk-ant-...
 npm run start:live
 ```
+
+### Live Mode (AMD Developer Cloud)
+
+The planner can use any OpenAI-compatible endpoint, including open models hosted on AMD Developer Cloud via vLLM. The executor uses Claude for tool-use quality.
+
+```bash
+export MODEL_PROVIDER=amd
+export AMD_API_BASE=https://your-instance.amdcloud.com/v1
+export AMD_API_KEY=your-key
+export AMD_MODEL=meta-llama/Llama-3-70B-Instruct
+export ANTHROPIC_API_KEY=sk-ant-...
+npm run start:live
+```
+
+This demonstrates the model-agnostic architecture: the orchestration layer (verdict gates, authority surfaces, escalation) works regardless of which model powers the planning.
 
 ### Verdict Fail Demo
 
@@ -166,6 +181,10 @@ The design principle: **autonomy is granted, not assumed.** Every task gets a sc
 | Flag | Default | Description |
 |------|---------|-------------|
 | `MOCK_LLM=1` | Set in `npm start` | Use deterministic mock responses |
+| `MODEL_PROVIDER=amd` | unset (uses Claude) | Route planner to AMD-hosted model via OpenAI-compatible API |
+| `AMD_API_BASE` | none | Base URL for AMD Developer Cloud vLLM endpoint |
+| `AMD_API_KEY` | `unused` | API key for AMD endpoint |
+| `AMD_MODEL` | `default` | Model name on AMD endpoint |
 | `--max-chain=N` | 10 | Maximum tasks before forced stop |
 | `--demo-verdict-fail` | off | Inject state corruption after first task |
 
