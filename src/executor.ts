@@ -120,6 +120,8 @@ async function executeLiveStep(
   let output = "";
   let iterations = 0;
   const maxIterations = 10;
+  const writeCounts = new Map<string, number>();
+  const maxWritesPerPath = 2;
 
   while (iterations < maxIterations) {
     iterations++;
@@ -167,6 +169,21 @@ async function executeLiveStep(
       log("tool_call", { tool: block.name, input: block.input, task_id: task.id });
 
       if (block.name === "write_file") {
+        const writePath = String((block.input as Record<string, unknown>).path ?? "");
+        const count = (writeCounts.get(writePath) ?? 0) + 1;
+        writeCounts.set(writePath, count);
+        if (count > maxWritesPerPath) {
+          const msg = `REPEATED WRITE BLOCKED: "${writePath}" already written ${maxWritesPerPath} time(s) this step. Likely loop -- move on.`;
+          log("tool_result", { tool: block.name, success: false, bytes: msg.length, task_id: task.id });
+          toolResults.push({
+            type: "tool_result",
+            tool_use_id: block.id,
+            content: msg,
+            is_error: true,
+          });
+          continue;
+        }
+
         const verdict = await checkVerdict(queue);
         if (!verdictAllowsMutation(verdict)) {
           const msg = `VERDICT GATE BLOCKED: Write rejected. State is ${verdict.status}: ${verdict.reason}`;
@@ -204,6 +221,10 @@ async function executeLiveStep(
 
     conversationHistory.push({ role: "assistant", content: response.content });
     conversationHistory.push({ role: "user", content: toolResults });
+  }
+
+  if (iterations >= maxIterations) {
+    return { success: false, output: `Step exhausted ${maxIterations} iterations without completing` };
   }
 
   return { success: true, output };
