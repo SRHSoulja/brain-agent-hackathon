@@ -30,7 +30,7 @@ Queue --> Claim --> Plan --> Execute (with verdict gates) --> Complete --> Escal
 Mock mode runs the full pipeline with deterministic LLM responses. This is the default demo path.
 
 ```bash
-git clone https://github.com/gmgnrepeat/brain-agent-hackathon
+git clone https://github.com/SRHSoulja/brain-agent-hackathon
 cd brain-agent-hackathon
 npm install
 npm start
